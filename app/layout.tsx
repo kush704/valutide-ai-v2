@@ -1,29 +1,19 @@
+// app/layout.tsx
 import './globals.css';
-import { Inter } from 'next/font/google';
-import Head from 'next/head';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'Valutide', // Set default title here
-  description: 'Your AI-powered assistant for students and businesses.',
+  title: 'Valutide',
+  description: 'Your AI partner for doubts',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        {/* Add custom head settings here */}
-        <Head>
-          <title>Valutide</title>
-        </Head>
-        {children}
+      <body>
+        <div className="container">
+          {children}
+        </div>
       </body>
     </html>
   );
 }
-
