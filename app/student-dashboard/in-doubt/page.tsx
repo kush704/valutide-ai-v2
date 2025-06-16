@@ -3,11 +3,14 @@
 import { useState } from 'react';
 import Tesseract from 'tesseract.js';
 
+interface Message {
+  type: 'user' | 'ai';
+  content: string;
+}
+
 const InDoubt = () => {
   const [userQuery, setUserQuery] = useState('');
-  const [chatHistory, setChatHistory] = useState<
-    { type: 'user' | 'ai'; content: string; image?: string }[]
-  >([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -25,10 +28,8 @@ const InDoubt = () => {
       setUserQuery(finalQuery);
     }
 
-    // 👇 Show user message once
-    setChatHistory((prev) => [...prev, { type: 'user', content: finalQuery }]);
+    setMessages((prev) => [...prev, { type: 'user', content: finalQuery }]);
     setUserQuery('');
-    setImageFile(null);
 
     const response = await fetch('/api/openrouter', {
       method: 'POST',
@@ -37,85 +38,73 @@ const InDoubt = () => {
     });
 
     const data = await response.json();
-
-    // 👇 Only add AI response here
-    setChatHistory((prev) => [
-      ...prev,
-      { type: 'ai', content: data.response, image: data.image },
-    ]);
-
+    setMessages((prev) => [...prev, { type: 'ai', content: data.response }]);
     setLoading(false);
+    setImageFile(null);
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
-      {/* Header */}
-      <div className="bg-white shadow px-6 py-4">
-        <h1 className="text-2xl font-bold text-blue-600">📘 Ask Your Doubt</h1>
-      </div>
+    <div className="min-h-screen bg-gray-100 p-4 md:p-6 flex flex-col">
+      <h1 className="text-2xl md:text-4xl font-bold text-blue-600 text-center mb-4 md:mb-6">
+        📘 Ask Your Doubt
+      </h1>
 
-      {/* Chat Area */}
-      <div className="flex-grow overflow-y-auto p-6 space-y-4">
-        {chatHistory.map((msg, index) => (
+      {/* Chat display area */}
+      <div className="flex-1 overflow-y-auto space-y-4 mb-4 max-w-3xl w-full mx-auto">
+        {messages.map((msg, idx) => (
           <div
-            key={index}
-            className={`max-w-3xl mx-auto p-4 rounded-xl shadow ${
+            key={idx}
+            className={`p-3 rounded-xl shadow-md w-fit max-w-[90%] break-words ${
               msg.type === 'user'
-                ? 'bg-blue-100 self-end text-right'
-                : 'bg-white self-start text-left'
+                ? 'bg-blue-100 text-blue-900 self-end ml-auto'
+                : 'bg-white text-gray-800 self-start mr-auto'
             }`}
           >
-            <p className="text-gray-800 whitespace-pre-line">{msg.content}</p>
-            {msg.image && (
-              <img
-                src={msg.image}
-                alt="AI provided"
-                className="mt-3 rounded-md border shadow-md w-full"
-              />
-            )}
+            {msg.content}
           </div>
         ))}
         {loading && (
-          <div className="text-gray-600 italic max-w-3xl mx-auto">
-            Loading AI response...
+          <div className="p-3 rounded-xl shadow-md bg-white text-gray-600 w-fit">
+            Loading...
           </div>
         )}
       </div>
 
-      {/* Input Box */}
-      <form onSubmit={handleQuerySubmit} className="bg-white border-t px-4 py-3 shadow-inner">
-        <div className="max-w-3xl mx-auto flex items-center gap-2">
-          {/* Upload Icon */}
-          <label className="cursor-pointer text-gray-600 hover:text-blue-500 text-2xl">
-            ➕
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) setImageFile(file);
-              }}
-              className="hidden"
-            />
-          </label>
-
-          {/* Input */}
+      {/* Chat input area */}
+      <form
+        onSubmit={handleQuerySubmit}
+        className="w-full max-w-3xl mx-auto flex items-center gap-2 p-2 bg-white rounded-xl shadow-md"
+      >
+        {/* Upload Button */}
+        <label className="cursor-pointer text-gray-600 hover:text-blue-600 text-xl font-bold px-2">
+          +
           <input
-            value={userQuery}
-            onChange={(e) => setUserQuery(e.target.value)}
-            placeholder="Type your question here..."
-            className="flex-grow rounded-full px-4 py-2 bg-gray-100 border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) setImageFile(file);
+            }}
+            className="hidden"
           />
+        </label>
 
-          {/* Send Button */}
-          <button
-            type="submit"
-            className="w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-lg flex items-center justify-center"
-            title="Send"
-          >
-            ➤
-          </button>
-        </div>
+        {/* Input Box - now takes full available space */}
+        <input
+          type="text"
+          value={userQuery}
+          onChange={(e) => setUserQuery(e.target.value)}
+          placeholder="Type your question..."
+          className="flex-grow px-4 py-3 text-gray-900 bg-gray-100 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base"
+        />
+
+        {/* Send Button - small */}
+        <button
+          type="submit"
+          className="w-10 h-10 flex items-center justify-center bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
+        >
+          ➤
+        </button>
       </form>
     </div>
   );
