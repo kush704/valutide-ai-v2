@@ -45,10 +45,21 @@ const InDoubt = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-between p-4 md:p-6">
-      <h1 className="text-2xl md:text-4xl font-bold text-blue-600 text-center mb-4">📘 Ask Your Doubt</h1>
+      <h1 className="text-2xl md:text-4xl font-bold text-blue-600 text-center mb-4">
+        📘 Ask Your Doubt
+      </h1>
 
       {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto space-y-4 mb-4 max-w-3xl w-full mx-auto">
+      <div className="flex-1 overflow-y-auto space-y-4 mb-4 max-w-3xl w-full mx-auto relative">
+        {/* Centered welcome message */}
+        {messages.length === 0 && !loading && (
+          <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+            <p className="text-2xl md:text-3xl font-bold text-blue-500 animate-pulse">
+              Ask anything... 📚✨
+            </p>
+          </div>
+        )}
+
         {messages.map((msg, idx) => (
           <div
             key={idx}
@@ -61,6 +72,7 @@ const InDoubt = () => {
             {msg.content}
           </div>
         ))}
+
         {loading && (
           <div className="p-3 rounded-xl shadow-md bg-white text-gray-600 w-fit">
             Loading...
