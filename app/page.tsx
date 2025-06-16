@@ -23,7 +23,7 @@ export default function Home() {
       </Head>
 
       <div
-        className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center px-4"
+        className="min-h-screen flex flex-col items-center justify-between bg-cover bg-center px-4 py-8"
         style={{ backgroundImage: "url('/bg-money-pattern.png')" }}
       >
         <div className="bg-white/80 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center w-full max-w-md md:max-w-2xl">
@@ -56,6 +56,11 @@ export default function Home() {
             </button>
           </div>
         </div>
+
+        {/* Footer */}
+        <p className="text-sm text-gray-600 mt-6 text-center">
+          © 2025 <span className="font-semibold text-blue-600">Valutide™</span>. All rights reserved.
+        </p>
       </div>
     </>
   );
