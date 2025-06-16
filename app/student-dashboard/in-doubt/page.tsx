@@ -44,17 +44,15 @@ const InDoubt = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 md:p-6 flex flex-col">
-      <h1 className="text-2xl md:text-4xl font-bold text-blue-600 text-center mb-4 md:mb-6">
-        📘 Ask Your Doubt
-      </h1>
+    <div className="min-h-screen bg-gray-100 flex flex-col justify-between p-4 md:p-6">
+      <h1 className="text-2xl md:text-4xl font-bold text-blue-600 text-center mb-4">📘 Ask Your Doubt</h1>
 
-      {/* Chat display area */}
+      {/* Chat Area */}
       <div className="flex-1 overflow-y-auto space-y-4 mb-4 max-w-3xl w-full mx-auto">
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`p-3 rounded-xl shadow-md w-fit max-w-[90%] break-words ${
+            className={`p-3 rounded-xl shadow-md max-w-[80%] break-words ${
               msg.type === 'user'
                 ? 'bg-blue-100 text-blue-900 self-end ml-auto'
                 : 'bg-white text-gray-800 self-start mr-auto'
@@ -70,13 +68,13 @@ const InDoubt = () => {
         )}
       </div>
 
-      {/* Chat input area */}
+      {/* Input Form */}
       <form
         onSubmit={handleQuerySubmit}
-        className="w-full max-w-3xl mx-auto flex items-center gap-2 p-2 bg-white rounded-xl shadow-md"
+        className="w-full max-w-3xl mx-auto flex items-center p-2 bg-white rounded-xl shadow-md gap-2"
       >
-        {/* Upload Button */}
-        <label className="cursor-pointer text-gray-600 hover:text-blue-600 text-xl font-bold px-2">
+        {/* Upload Image */}
+        <label className="cursor-pointer text-xl text-gray-600 hover:text-blue-600">
           +
           <input
             type="file"
@@ -89,7 +87,7 @@ const InDoubt = () => {
           />
         </label>
 
-        {/* Input Box - now takes full available space */}
+        {/* Text Input */}
         <input
           type="text"
           value={userQuery}
@@ -98,10 +96,10 @@ const InDoubt = () => {
           className="flex-grow px-4 py-3 text-gray-900 bg-gray-100 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base"
         />
 
-        {/* Send Button - small */}
+        {/* Send Button */}
         <button
           type="submit"
-          className="w-10 h-10 flex items-center justify-center bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
+          className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition"
         >
           ➤
         </button>

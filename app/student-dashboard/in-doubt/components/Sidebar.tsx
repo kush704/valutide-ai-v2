@@ -1,23 +1,13 @@
-'use client';
-
-import React from 'react';
-
+// components/Sidebar.tsx
 const Sidebar = () => {
   return (
-    <div className="w-64 bg-white shadow-md p-4 space-y-4 overflow-y-auto">
-      <button className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
-        + New Chat
-      </button>
-      <div className="space-y-2">
-        {[...Array(10)].map((_, i) => (
-          <div
-            key={i}
-            className="p-3 bg-gray-100 rounded-lg hover:bg-blue-100 cursor-pointer"
-          >
-            Chat {i + 1}
-          </div>
-        ))}
-      </div>
+    <div className="h-full p-4 space-y-4">
+      <h2 className="text-xl font-bold text-gray-700">Past Chats</h2>
+      <ul className="space-y-2">
+        <li className="text-blue-600 cursor-pointer">Photosynthesis</li>
+        <li className="text-blue-600 cursor-pointer">Budget Question</li>
+        <li className="text-blue-600 cursor-pointer">New Chat</li>
+      </ul>
     </div>
   );
 };
