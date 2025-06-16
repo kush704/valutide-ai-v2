@@ -5,23 +5,30 @@ import Tesseract from 'tesseract.js';
 
 const InDoubt = () => {
   const [userQuery, setUserQuery] = useState('');
-  const [aiResponse, setAiResponse] = useState('');
+  const [chatHistory, setChatHistory] = useState<
+    { type: 'user' | 'ai'; content: string; image?: string }[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleQuerySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!userQuery && !imageFile) return;
+
     setLoading(true);
-    setAiResponse('');
 
     let finalQuery = userQuery;
 
-    // If image is uploaded, extract text using OCR
     if (imageFile) {
       const ocrResult = await Tesseract.recognize(imageFile, 'eng');
       finalQuery = ocrResult.data.text.trim();
-      setUserQuery(finalQuery); // Show extracted text in textarea
+      setUserQuery(finalQuery);
     }
+
+    // 👇 Show user message once
+    setChatHistory((prev) => [...prev, { type: 'user', content: finalQuery }]);
+    setUserQuery('');
+    setImageFile(null);
 
     const response = await fetch('/api/openrouter', {
       method: 'POST',
@@ -30,57 +37,86 @@ const InDoubt = () => {
     });
 
     const data = await response.json();
-    setAiResponse(data.response);
+
+    // 👇 Only add AI response here
+    setChatHistory((prev) => [
+      ...prev,
+      { type: 'ai', content: data.response, image: data.image },
+    ]);
+
     setLoading(false);
-    setImageFile(null); // Reset image
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-8">
-      <h1 className="text-4xl font-bold text-blue-600 text-center mb-8">📘 Ask Your Doubt</h1>
+    <div className="flex flex-col h-screen bg-gray-100">
+      {/* Header */}
+      <div className="bg-white shadow px-6 py-4">
+        <h1 className="text-2xl font-bold text-blue-600">📘 Ask Your Doubt</h1>
+      </div>
 
-      <form onSubmit={handleQuerySubmit} className="w-full max-w-2xl space-y-4">
-        <textarea
-          value={userQuery}
-          onChange={(e) => setUserQuery(e.target.value)}
-          placeholder="Type your question here..."
-          rows={5}
-          className="w-full p-4 rounded-xl bg-gray-800 text-white text-lg shadow-md border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
+      {/* Chat Area */}
+      <div className="flex-grow overflow-y-auto p-6 space-y-4">
+        {chatHistory.map((msg, index) => (
+          <div
+            key={index}
+            className={`max-w-3xl mx-auto p-4 rounded-xl shadow ${
+              msg.type === 'user'
+                ? 'bg-blue-100 self-end text-right'
+                : 'bg-white self-start text-left'
+            }`}
+          >
+            <p className="text-gray-800 whitespace-pre-line">{msg.content}</p>
+            {msg.image && (
+              <img
+                src={msg.image}
+                alt="AI provided"
+                className="mt-3 rounded-md border shadow-md w-full"
+              />
+            )}
+          </div>
+        ))}
+        {loading && (
+          <div className="text-gray-600 italic max-w-3xl mx-auto">
+            Loading AI response...
+          </div>
+        )}
+      </div>
 
-        <div className="flex flex-col gap-2">
-          <label className="text-gray-700 font-medium">Or upload a question image:</label>
+      {/* Input Box */}
+      <form onSubmit={handleQuerySubmit} className="bg-white border-t px-4 py-3 shadow-inner">
+        <div className="max-w-3xl mx-auto flex items-center gap-2">
+          {/* Upload Icon */}
+          <label className="cursor-pointer text-gray-600 hover:text-blue-500 text-2xl">
+            ➕
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) setImageFile(file);
+              }}
+              className="hidden"
+            />
+          </label>
+
+          {/* Input */}
           <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) setImageFile(file);
-            }}
-            className="w-full"
+            value={userQuery}
+            onChange={(e) => setUserQuery(e.target.value)}
+            placeholder="Type your question here..."
+            className="flex-grow rounded-full px-4 py-2 bg-gray-100 border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-        </div>
 
-        <button
-          type="submit"
-          className="w-full py-3 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-blue-700 transition"
-        >
-          Submit
-        </button>
+          {/* Send Button */}
+          <button
+            type="submit"
+            className="w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-lg flex items-center justify-center"
+            title="Send"
+          >
+            ➤
+          </button>
+        </div>
       </form>
-
-      {loading && (
-        <div className="mt-6 p-4 bg-white shadow rounded-xl text-gray-600">
-          Loading AI Response...
-        </div>
-      )}
-
-      {aiResponse && !loading && (
-        <div className="mt-6 p-6 bg-white shadow-lg rounded-xl w-full max-w-2xl">
-          <h2 className="text-2xl font-bold text-green-600 mb-2">AI Answer:</h2>
-          <p className="text-gray-800 whitespace-pre-line">{aiResponse}</p>
-        </div>
-      )}
     </div>
   );
 };
