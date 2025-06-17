@@ -2,10 +2,48 @@
 
 import { useRouter } from 'next/navigation';
 import Head from 'next/head';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const router = useRouter();
+  const [showSplash, setShowSplash] = useState(true);
 
+  useEffect(() => {
+    const splashShown = sessionStorage.getItem('splashShown');
+    if (splashShown) {
+      setShowSplash(false);
+    } else {
+      sessionStorage.setItem('splashShown', 'true');
+      const timer = setTimeout(() => {
+        setShowSplash(false);
+      }, 5000); // show for 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  if (showSplash) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center px-4">
+        <div className="w-full max-w-sm md:max-w-lg">
+          <video
+            autoPlay
+            muted
+            playsInline
+            className="w-full h-auto rounded-xl shadow-lg"
+          >
+            <source src="/Kalutide.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+
+        <h2 className="text-white text-center text-base sm:text-lg md:text-2xl font-semibold mt-4 px-2">
+          Empowering Accounting. Enabling Dreams.
+        </h2>
+      </div>
+    );
+  }
+
+  // After splash screen
   const navigateToMode = (mode: string) => {
     if (mode === 'student') {
       router.push('/student-dashboard');
