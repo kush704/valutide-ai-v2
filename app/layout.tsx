@@ -1,17 +1,20 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
-export const metadata: Metadata = {
+export const metadata = {
   title: 'Valutide',
-  icons: {
-    icon: '/valutide-logo.png', // file should be inside /public
-  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <head>
+        <link rel="icon" href="/valutide-logo.png" type="image/png" sizes="32x32" />
+      </head>
+      <body>
+        {children}
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
