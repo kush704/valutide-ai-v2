@@ -16,7 +16,7 @@ export default function Home() {
       sessionStorage.setItem('splashShown', 'true');
       const timer = setTimeout(() => {
         setShowSplash(false);
-      }, 5000); // show for 5 seconds
+      }, 5000); // show splash for 5 seconds
       return () => clearTimeout(timer);
     }
   }, []);
@@ -43,7 +43,6 @@ export default function Home() {
     );
   }
 
-  // After splash screen
   const navigateToMode = (mode: string) => {
     if (mode === 'student') {
       router.push('/student-dashboard');
@@ -56,9 +55,10 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>Valutide</title>
-      </Head>
+    <Head>
+  <title>Valutide</title>
+  <link rel="icon" href="/valutide-logo.png" type="image/png" sizes="32x32" />
+</Head>
 
       <div
         className="min-h-screen flex flex-col items-center justify-between bg-cover bg-center px-4 py-8"

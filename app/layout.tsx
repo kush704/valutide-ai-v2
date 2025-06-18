@@ -1,17 +1,17 @@
-// app/layout.tsx
 import './globals.css';
+import type { Metadata } from 'next';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Valutide',
-  description: 'Your AI partner for doubts',
+  icons: {
+    icon: '/valutide-logo.png', // file should be inside /public
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen w-full">
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
