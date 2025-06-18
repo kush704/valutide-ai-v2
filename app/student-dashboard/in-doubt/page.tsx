@@ -44,17 +44,20 @@ const InDoubt = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-between p-4 md:p-6">
-      <h1 className="text-2xl md:text-4xl font-bold text-blue-600 text-center mb-4">
+    <div
+      className="min-h-screen bg-cover bg-center bg-no-repeat flex flex-col justify-between p-4 md:p-6"
+      style={{ backgroundImage: "url('/in-doubt-bg.png')" }} // ✅ use your image path here
+    >
+      <h1 className="text-2xl md:text-4xl font-bold text-blue-800 text-center mb-4">
         📘 Ask Your Doubt
       </h1>
 
       {/* Chat Area */}
       <div className="flex-1 overflow-y-auto space-y-4 mb-4 max-w-3xl w-full mx-auto relative">
-        {/* Centered welcome message */}
+        {/* Welcome Prompt */}
         {messages.length === 0 && !loading && (
           <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-            <p className="text-2xl md:text-3xl font-bold text-blue-500 animate-pulse">
+            <p className="text-2xl md:text-3xl font-bold text-blue-600 animate-pulse">
               Ask anything... 📚✨
             </p>
           </div>
