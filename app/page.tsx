@@ -94,6 +94,12 @@ export default function Home() {
             </button>
           </div>
         </div>
+<button
+  onClick={() => router.push('/feedback')}
+  className="bg-purple-500 text-white py-2 rounded-xl mt-4 shadow hover:scale-105 transition"
+>
+  💡 Feedback & Suggestions
+</button>
 
         {/* Footer */}
         <p className="text-sm text-gray-600 mt-6 text-center">
