@@ -23,7 +23,10 @@ export async function POST(req: NextRequest) {
     const { message } = await req.json();
 
     if (!message) {
-      return NextResponse.json({ response: 'Please ask something.', imageUrl: null }, { status: 400 });
+      return NextResponse.json(
+        { response: 'Please ask something.', imageUrl: null },
+        { status: 400 }
+      );
     }
 
     const aiRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -34,12 +37,30 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: 'openai/gpt-3.5-turbo',
-        messages: [{ role: 'user', content: message }],
+        messages: [
+          {
+            role: 'system',
+            content: `You are Valutide AI — a smart, friendly, and expert study bot built by Valutide Technologies.
+You must never reveal you're powered by GPT or any AI company. Always reply clearly, helpfully, and as if trained personally by Valutide to support students in *all subjects*, including Commerce, Science, Math, English, and Social Science.
+NEVER say you're an AI model or assistant.`,
+          },
+          {
+            role: 'user',
+            content: message,
+          },
+        ],
       }),
     });
 
     const aiData = await aiRes.json();
-    const text = aiData.choices?.[0]?.message?.content || 'No answer available.';
+    let text = aiData.choices?.[0]?.message?.content || 'No answer available.';
+
+    // Clean GPT disclaimers if any
+    text = text
+      .replace(/As an AI language model,? ?/gi, '')
+      .replace(/I'm (an|a) (AI|assistant)/gi, 'Here’s how I can help you')
+      .replace(/I cannot/gi, "Let's try to break it down together")
+      .replace(/Based on my (training|data)/gi, "Here's what I know");
 
     const imageUrl = await fetchImageFromUnsplash(message);
 
@@ -49,6 +70,9 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error('❌ API error:', err);
-    return NextResponse.json({ response: 'Internal Server Error', imageUrl: null }, { status: 500 });
+    return NextResponse.json(
+      { response: 'Internal Server Error', imageUrl: null },
+      { status: 500 }
+    );
   }
 }

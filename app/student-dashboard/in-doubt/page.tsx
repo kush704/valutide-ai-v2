@@ -38,7 +38,16 @@ const InDoubt = () => {
     });
 
     const data = await response.json();
-    setMessages((prev) => [...prev, { type: 'ai', content: data.response }]);
+
+    // Clean GPT-style disclaimers from response
+    let reply = data.response;
+    reply = reply
+      .replace(/As an AI language model,? ?/gi, '')
+      .replace(/I cannot/gi, "Let's break it down together. Here's how:")
+      .replace(/I'm just an AI/gi, "Here's how I can explain it")
+      .replace(/Based on my training/gi, "From what I know");
+
+    setMessages((prev) => [...prev, { type: 'ai', content: reply }]);
     setLoading(false);
     setImageFile(null);
   };
@@ -46,19 +55,20 @@ const InDoubt = () => {
   return (
     <div
       className="min-h-screen bg-cover bg-center bg-no-repeat flex flex-col justify-between p-4 md:p-6"
-      style={{ backgroundImage: "url('/in-doubt-bg.png')" }} // ✅ use your image path here
+      style={{ backgroundImage: "url('/in-doubt-bg.png')" }}
     >
       <h1 className="text-2xl md:text-4xl font-bold text-blue-800 text-center mb-4">
         📘 Ask Your Doubt
       </h1>
 
-      {/* Chat Area */}
       <div className="flex-1 overflow-y-auto space-y-4 mb-4 max-w-3xl w-full mx-auto relative">
-        {/* Welcome Prompt */}
         {messages.length === 0 && !loading && (
           <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
             <p className="text-2xl md:text-3xl font-bold text-blue-600 animate-pulse">
               Ask anything... 📚✨
+            </p>
+            <p className="text-md mt-2 text-gray-500">
+              Valutide AI covers all subjects!
             </p>
           </div>
         )}
@@ -78,7 +88,7 @@ const InDoubt = () => {
 
         {loading && (
           <div className="p-3 rounded-xl shadow-md bg-white text-gray-600 w-fit">
-            Loading...
+            Valutide AI is thinking... 💭
           </div>
         )}
       </div>
@@ -90,7 +100,7 @@ const InDoubt = () => {
       >
         {/* Upload Image */}
         <label className="cursor-pointer text-xl text-gray-600 hover:text-blue-600">
-          +
+          📷
           <input
             type="file"
             accept="image/*"
@@ -102,7 +112,6 @@ const InDoubt = () => {
           />
         </label>
 
-        {/* Text Input */}
         <input
           type="text"
           value={userQuery}
@@ -111,7 +120,6 @@ const InDoubt = () => {
           className="flex-grow px-4 py-3 text-gray-900 bg-gray-100 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-base"
         />
 
-        {/* Send Button */}
         <button
           type="submit"
           className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition"
