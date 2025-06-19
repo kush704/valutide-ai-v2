@@ -41,7 +41,7 @@ export default function AboutUsPage() {
 
           <h2 className="text-2xl font-semibold mt-8 mb-4 text-green-700">Our Founder’s Belief</h2>
           <p className="text-base leading-relaxed italic mb-6">
-            “I topped in 10th, topped in 12th — and now, I’m building the future of accounting. I believe the universe listens when
+            “I topped in acdemics — and now, I’m building the future of accounting. I believe the universe listens when
             we dream big and act fearlessly.” 💬
           </p>
 
