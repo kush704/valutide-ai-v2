@@ -21,6 +21,16 @@ export default function Home() {
     }
   }, []);
 
+  const navigateToMode = (mode: string) => {
+    if (mode === 'student') {
+      router.push('/student-dashboard');
+    } else if (mode === 'business') {
+      router.push('/business-dashboard');
+    } else if (mode === 'commerce') {
+      router.push('/commerce-ai');
+    }
+  };
+
   if (showSplash) {
     return (
       <div className="min-h-screen bg-black flex flex-col items-center justify-center px-4">
@@ -43,22 +53,12 @@ export default function Home() {
     );
   }
 
-  const navigateToMode = (mode: string) => {
-    if (mode === 'student') {
-      router.push('/student-dashboard');
-    } else if (mode === 'business') {
-      router.push('/business-dashboard');
-    } else if (mode === 'commerce') {
-      router.push('/commerce-ai');
-    }
-  };
-
   return (
     <>
-    <Head>
-  <title>Valutide</title>
-  <link rel="icon" href="/valutide-logo.png" type="image/png" sizes="32x32" />
-</Head>
+      <Head>
+        <title>Valutide</title>
+        <link rel="icon" href="/valutide-logo.png" type="image/png" sizes="32x32" />
+      </Head>
 
       <div
         className="min-h-screen flex flex-col items-center justify-between bg-cover bg-center px-4 py-8"
@@ -93,13 +93,48 @@ export default function Home() {
               🧾 Ask Commerce AI
             </button>
           </div>
+
+          <button
+            onClick={() => router.push('/feedback')}
+            className="bg-purple-500 text-white py-2 rounded-xl mt-6 shadow hover:scale-105 transition"
+          >
+            💡 Feedback & Suggestions
+          </button>
+
+          {/* Social Links */}
+          <div className="mt-6 space-y-2 text-sm sm:text-base text-gray-700">
+          <p>
+  📘 <span className="font-medium">About Us</span>: 
+  <a
+    href="/about-us"
+    className="text-blue-600 hover:underline ml-1"
+  >
+    Learn more
+  </a>
+</p>
+
+            <p>
+              🔔 <span className="font-medium">Follow us on YouTube</span>: 
+              <a
+                href="https://www.youtube.com/@valutide"
+                target="_blank"
+                className="text-red-600 hover:underline ml-1"
+              >
+                youtube.com/@valutide
+              </a>
+            </p>
+            <p>
+              📸 <span className="font-medium">Follow us on Instagram</span>: 
+              <a
+                href="https://www.instagram.com/valutide"
+                target="_blank"
+                className="text-pink-500 hover:underline ml-1"
+              >
+                instagram.com/valutide
+              </a>
+            </p>
+          </div>
         </div>
-<button
-  onClick={() => router.push('/feedback')}
-  className="bg-purple-500 text-white py-2 rounded-xl mt-4 shadow hover:scale-105 transition"
->
-  💡 Feedback & Suggestions
-</button>
 
         {/* Footer */}
         <p className="text-sm text-gray-600 mt-6 text-center">

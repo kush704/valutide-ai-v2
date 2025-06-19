@@ -1,5 +1,3 @@
-// app/student-dashboard/page.tsx
-
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -16,7 +14,6 @@ export default function StudentDashboard() {
       className="min-h-screen bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: "url('/student-dashboard.png')" }}
     >
-      {/* Main content on top of background */}
       <div className="flex flex-col items-center justify-center min-h-screen px-4 py-10 bg-transparent">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 text-gray-800 drop-shadow-md">
           Welcome to Student Dashboard 🎓
