@@ -11,10 +11,13 @@ export default function AboutUsPage() {
         <link rel="icon" href="/valutide-logo.png" type="image/png" sizes="32x32" />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-blue-100 px-6 py-12 flex flex-col items-center justify-center">
-        <div className="max-w-3xl bg-white shadow-2xl rounded-3xl p-10 text-gray-800 text-center">
+      <div
+        className="min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-6 py-12"
+        style={{ backgroundImage: "url('/about-bg.jpg')" }}
+      >
+        <div className="bg-white bg-opacity-80 backdrop-blur-md shadow-2xl rounded-3xl p-10 text-gray-800 text-center max-w-3xl w-full">
           <h1 className="text-4xl font-bold mb-6 text-blue-700">About Valutide™</h1>
-          
+
           <p className="text-lg leading-relaxed mb-6">
             <strong>Valutide</strong> is a revolutionary platform founded with a mission to make accounting smart, simple, and futuristic.
             Built from scratch by a passionate commerce student from India, we aim to transform the way students and businesses
@@ -28,7 +31,7 @@ export default function AboutUsPage() {
           </p>
 
           <p className="text-lg leading-relaxed mb-6">
-            What started as a thought which is growing into an ecosystem — powered by vision, dedication, and the belief
+            What started as a thought is growing into an ecosystem — powered by vision, dedication, and the belief
             that even a small team can create global impact. With YouTube videos, Instagram updates, and 24x7 development,
             we are just getting started 🚀.
           </p>
@@ -41,7 +44,7 @@ export default function AboutUsPage() {
 
           <h2 className="text-2xl font-semibold mt-8 mb-4 text-green-700">Our Founder’s Belief</h2>
           <p className="text-base leading-relaxed italic mb-6">
-            “I topped in acdemics — and now, I’m building the future of accounting. I believe the universe listens when
+            “I topped in academics — and now, I’m building the future of accounting. I believe the universe listens when
             we dream big and act fearlessly.” 💬
           </p>
 
@@ -74,8 +77,8 @@ export default function AboutUsPage() {
           </Link>
         </div>
 
-        <p className="mt-10 text-sm text-gray-600 text-center">
-          © 2025 <span className="font-semibold text-blue-600">Valutide™</span> | Built from India, for the 🌍
+        <p className="mt-10 text-sm text-white text-center shadow-md bg-black bg-opacity-30 px-4 py-2 rounded-full">
+          © 2025 <span className="font-semibold text-yellow-300">Valutide™</span> | Built from India, for the 🌍
         </p>
       </div>
     </>
