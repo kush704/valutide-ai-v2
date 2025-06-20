@@ -3,7 +3,20 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const defaultFeatures = {
+// Define the structure of all features
+type FeatureSections =
+  | 'accounting'
+  | 'inventory'
+  | 'taxation'
+  | 'online'
+  | 'payroll'
+  | 'others';
+
+type FeatureSet = {
+  [key in FeatureSections]: { [label: string]: string };
+};
+
+const defaultFeatures: FeatureSet = {
   accounting: {
     'Maintain Accounts': 'Yes',
     'Enable Bill-wise entry': 'Yes',
@@ -48,10 +61,10 @@ const defaultFeatures = {
 
 export default function CompanyFeatures() {
   const router = useRouter();
-  const [features, setFeatures] = useState(defaultFeatures);
+  const [features, setFeatures] = useState<FeatureSet>(defaultFeatures);
   const [companyName, setCompanyName] = useState('Loading...');
 
-  const handleChange = (section: string, feature: string, value: string) => {
+  const handleChange = (section: FeatureSections, feature: string, value: string) => {
     setFeatures((prev) => ({
       ...prev,
       [section]: {
@@ -94,7 +107,6 @@ export default function CompanyFeatures() {
       <h1 className="text-xl font-bold text-center mb-4">📘 Company Features - {companyName}</h1>
 
       <div className="bg-white shadow-xl rounded-xl border border-gray-300 max-w-6xl mx-auto p-6 space-y-6">
-
         <div className="text-base font-medium">
           Company: <span className="font-semibold text-blue-600">{companyName}</span>
         </div>
@@ -108,7 +120,7 @@ export default function CompanyFeatures() {
                   <label className="text-gray-700 mr-4">{label}</label>
                   <select
                     value={value}
-                    onChange={(e) => handleChange(section, label, e.target.value)}
+                    onChange={(e) => handleChange(section as FeatureSections, label, e.target.value)}
                     className="border rounded px-3 py-1 text-black bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                   >
                     <option value="Yes">Yes</option>
