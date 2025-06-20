@@ -3,20 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-// Define the structure of all features
-type FeatureSections =
-  | 'accounting'
-  | 'inventory'
-  | 'taxation'
-  | 'online'
-  | 'payroll'
-  | 'others';
+type FeatureState = Record<string, Record<string, string>>;
 
-type FeatureSet = {
-  [key in FeatureSections]: { [label: string]: string };
-};
-
-const defaultFeatures: FeatureSet = {
+const defaultFeatures: FeatureState = {
   accounting: {
     'Maintain Accounts': 'Yes',
     'Enable Bill-wise entry': 'Yes',
@@ -61,10 +50,10 @@ const defaultFeatures: FeatureSet = {
 
 export default function CompanyFeatures() {
   const router = useRouter();
-  const [features, setFeatures] = useState<FeatureSet>(defaultFeatures);
+  const [features, setFeatures] = useState<FeatureState>(defaultFeatures);
   const [companyName, setCompanyName] = useState('Loading...');
 
-  const handleChange = (section: FeatureSections, feature: string, value: string) => {
+  const handleChange = (section: keyof FeatureState, feature: string, value: string) => {
     setFeatures((prev) => ({
       ...prev,
       [section]: {
@@ -85,15 +74,17 @@ export default function CompanyFeatures() {
 
   useEffect(() => {
     const name = sessionStorage.getItem('selectedCompanyName');
-    setCompanyName(name || 'Unnamed Company');
-  }, []);
+    if (!name) {
+      router.push('/business/select-company'); // ✅ redirect if no company
+    } else {
+      setCompanyName(name);
+    }
+  }, [router]);
 
   useEffect(() => {
     const listener = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      const tag = target.tagName.toLowerCase();
-      if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
-
+      const tag = (e.target as HTMLElement).tagName.toLowerCase();
+      if (tag === 'input' || tag === 'select') return;
       if (e.key.toLowerCase() === 'q') handleQuit();
       if (e.key.toLowerCase() === 'a') handleAccept();
     };
@@ -107,6 +98,7 @@ export default function CompanyFeatures() {
       <h1 className="text-xl font-bold text-center mb-4">📘 Company Features - {companyName}</h1>
 
       <div className="bg-white shadow-xl rounded-xl border border-gray-300 max-w-6xl mx-auto p-6 space-y-6">
+
         <div className="text-base font-medium">
           Company: <span className="font-semibold text-blue-600">{companyName}</span>
         </div>
@@ -120,7 +112,7 @@ export default function CompanyFeatures() {
                   <label className="text-gray-700 mr-4">{label}</label>
                   <select
                     value={value}
-                    onChange={(e) => handleChange(section as FeatureSections, label, e.target.value)}
+                    onChange={(e) => handleChange(section as keyof FeatureState, label, e.target.value)}
                     className="border rounded px-3 py-1 text-black bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                   >
                     <option value="Yes">Yes</option>
@@ -133,18 +125,8 @@ export default function CompanyFeatures() {
         ))}
 
         <div className="flex justify-between mt-8 text-sm font-semibold text-blue-700">
-          <button
-            onClick={handleQuit}
-            className="bg-red-100 hover:bg-red-200 px-4 py-2 rounded-md"
-          >
-            Q: Quit
-          </button>
-          <button
-            onClick={handleAccept}
-            className="bg-green-100 hover:bg-green-200 px-4 py-2 rounded-md"
-          >
-            A: Accept
-          </button>
+          <button onClick={handleQuit} className="bg-red-100 hover:bg-red-200 px-4 py-2 rounded-md">Q: Quit</button>
+          <button onClick={handleAccept} className="bg-green-100 hover:bg-green-200 px-4 py-2 rounded-md">A: Accept</button>
         </div>
       </div>
     </div>
