@@ -25,7 +25,8 @@ export default function Home() {
     if (mode === 'student') {
       router.push('/student-dashboard');
     } else if (mode === 'business') {
-      router.push('/business-dashboard');
+      router.push('/business/select-company')
+
     } else if (mode === 'commerce') {
       router.push('/commerce-ai');
     }
