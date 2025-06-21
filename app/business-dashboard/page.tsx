@@ -37,37 +37,37 @@ export default function BusinessDashboard() {
           <div>
             <p className="text-blue-700 font-semibold mb-1">MASTERS</p>
             <button className="dashboard-btn" onClick={() => router.push('/masters/create')}>Create</button>
-            <button className="dashboard-btn">Alter</button>
-            <button className="dashboard-btn">Chart of Accounts</button>
+            <button className="dashboard-btn" onClick={() => router.push('/masters/alter')}>Alter</button>
+            <button className="dashboard-btn" onClick={() => router.push('/masters/chart-of-accounts')}>Chart of Accounts</button>
           </div>
 
           {/* Transactions */}
           <div>
             <p className="text-blue-700 font-semibold mb-1">TRANSACTIONS</p>
-            <button className="dashboard-btn">Vouchers</button>
-            <button className="dashboard-btn">Day Book</button>
+            <button className="dashboard-btn" onClick={() => router.push('/transactions/vouchers')}>Vouchers</button>
+            <button className="dashboard-btn" onClick={() => router.push('/transactions/daybook')}>Day Book</button>
           </div>
 
           {/* Utilities */}
           <div>
             <p className="text-blue-700 font-semibold mb-1">UTILITIES</p>
-            <button className="dashboard-btn">Banking</button>
+            <button className="dashboard-btn" onClick={() => router.push('/utilities/banking')}>Banking</button>
           </div>
 
           {/* Reports */}
           <div>
             <p className="text-blue-700 font-semibold mb-1">REPORTS</p>
-            <button className="dashboard-btn">Balance Sheet</button>
-            <button className="dashboard-btn">Profit & Loss A/c</button>
-            <button className="dashboard-btn">Stock Summary</button>
-            <button className="dashboard-btn">Ratio Analysis</button>
+            <button className="dashboard-btn" onClick={() => router.push('/reports/balance-sheet')}>Balance Sheet</button>
+            <button className="dashboard-btn" onClick={() => router.push('/reports/profit-loss')}>Profit & Loss A/c</button>
+            <button className="dashboard-btn" onClick={() => router.push('/reports/stock-summary')}>Stock Summary</button>
+            <button className="dashboard-btn" onClick={() => router.push('/reports/ratio-analysis')}>Ratio Analysis</button>
           </div>
 
           {/* More */}
           <div>
             <p className="text-blue-700 font-semibold mb-1">MORE</p>
-            <button className="dashboard-btn">Display More Reports</button>
-            <button className="dashboard-btn">Dashboard</button>
+            <button className="dashboard-btn" onClick={() => router.push('/reports/display-more')}>Display More Reports</button>
+            <button className="dashboard-btn" onClick={() => router.push('/reports/dashboard')}>Dashboard</button>
           </div>
 
           {/* Quit */}
@@ -89,8 +89,8 @@ export default function BusinessDashboard() {
           margin-bottom: 8px;
           text-align: left;
           cursor: pointer;
-          color: #111827;        /* darker text */
-          font-weight: 600;      /* bolder text */
+          color: #111827;
+          font-weight: 600;
         }
         .dashboard-btn:hover {
           background-color: #dbeafe;
