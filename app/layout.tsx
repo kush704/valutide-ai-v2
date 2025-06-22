@@ -1,22 +1,21 @@
 import './globals.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import ClientLayout from './ClientLayout'; // ✅ CORRECT
+import NextAuthProvider from './SessionProvider';
 
-export const metadata = {
-  title: 'Valutide',
-};
+export const metadata = { title: 'Valutide' };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children, }: { children: React.ReactNode }) {
+  const { getServerSession } = await import("next-auth/next");
+  const { authOptions } = await import("./api/auth/[...nextauth]/route");
+  const session = await getServerSession(authOptions);
+
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/valutide-logo.png" type="image/png" sizes="32x32" />
-      </head>
       <body>
-        <ClientLayout>
+        <NextAuthProvider session={session}>
           {children}
           <SpeedInsights />
-        </ClientLayout>
+        </NextAuthProvider>
       </body>
     </html>
   );
