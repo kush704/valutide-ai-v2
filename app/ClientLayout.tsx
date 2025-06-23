@@ -1,10 +1,7 @@
 'use client';
-import NextAuthProvider from './SessionProvider'; // make sure path is correct
+
+import { SessionProvider } from 'next-auth/react';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <NextAuthProvider>
-      {children}
-    </NextAuthProvider>
-  );
+  return <SessionProvider>{children}</SessionProvider>;
 }
