@@ -1,19 +1,23 @@
+// app/layout.tsx
 import './globals.css';
-import { SpeedInsights } from '@vercel/speed-insights/next';
-import ClientLayout from './ClientLayout';  // Ensure filename casing matches
-export const metadata = { title: 'Valutide' };
+import { Inter } from 'next/font/google';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata = {
+  title: 'Valutide',
+  description: 'Empowering Accounting. Enabling Dreams.',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/valutide-logo.png" />
-      </head>
-      <body>
-        <ClientLayout>
-          {children}
-          <SpeedInsights />
-        </ClientLayout>
+      <body className={inter.className}>
+        {children}
       </body>
     </html>
   );
