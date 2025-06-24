@@ -21,10 +21,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/valutide-logo.png" type="image/png" />
-        <title>Valutide</title>
-      </head>
       <body className={inter.className}>
         <Provider>
           {children}
@@ -33,3 +29,4 @@ export default function RootLayout({
     </html>
   );
 }
+
