@@ -2,6 +2,7 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
 import type { Metadata } from 'next';
+import Provider from './session-provider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,7 +26,9 @@ export default function RootLayout({
         <title>Valutide</title>
       </head>
       <body className={inter.className}>
-        {children}
+        <Provider>
+          {children}
+        </Provider>
       </body>
     </html>
   );
