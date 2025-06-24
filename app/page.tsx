@@ -3,14 +3,11 @@
 import { useRouter } from 'next/navigation';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
-import { signIn, signOut, useSession } from 'next-auth/react';
-import Image from 'next/image';
+
 
 export default function Home() {
   const router = useRouter();
-  const { data: session, status } = useSession();
   const [showSplash, setShowSplash] = useState(true);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const splashShown = sessionStorage.getItem('splashShown');
@@ -41,22 +38,6 @@ export default function Home() {
     );
   }
 
-  if (status === 'loading') {
-    return <div className="min-h-screen flex justify-center items-center">Loading...</div>;
-  }
-
-  if (!session) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center text-center px-4">
-        <h2 className="text-2xl font-bold mb-4">Welcome to Valutide 👋</h2>
-        <p className="mb-6 text-gray-700">Please sign in with your Google account to continue</p>
-        <button onClick={() => signIn('google')} className="bg-blue-600 text-white px-6 py-2 rounded shadow hover:scale-105 transition">
-          🔐 Sign In with Google
-        </button>
-      </div>
-    );
-  }
-
   return (
     <>
       <Head>
@@ -64,41 +45,10 @@ export default function Home() {
         <link rel="icon" href="/valutide-logo.png" type="image/png" sizes="32x32" />
       </Head>
 
-      {/* ✅ Homepage */}
       <div className="min-h-screen flex flex-col bg-cover bg-center px-4 py-6 relative"
         style={{ backgroundImage: "url('/bg-money-pattern.png')" }}>
 
-        {/* ✅ User avatar + dropdown */}
-        <div className="absolute top-4 right-6 z-10">
-          <div className="relative">
-            <Image
-              src={session.user?.image || '/default-avatar.png'}
-              alt="User"
-              width={40}
-              height={40}
-              className="rounded-full cursor-pointer border-2 border-gray-300"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            />
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border z-50">
-                <button
-                  className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
-                  onClick={() => router.push('/settings')}
-                >
-                  ⚙️ Settings
-                </button>
-                <button
-                  className="block w-full px-4 py-2 text-left text-red-600 hover:bg-gray-100"
-                  onClick={() => signOut()}
-                >
-                  🔓 Sign Out
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* ✅ Center box */}
+        {/* ✅ Center content */}
         <div className="bg-white/80 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center w-full max-w-md md:max-w-2xl mx-auto mt-16">
           <button className="bg-yellow-400 text-black font-semibold text-lg px-6 py-2 rounded-full shadow mb-6 hover:scale-105 transition">
             WELCOME TO VALUTIDE 👋
