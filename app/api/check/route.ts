@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
+  const apiKey = process.env.OPENROUTER_CHECKER_KEY!;
+
   try {
     const { prompt } = await req.json();
     console.log("🔍 Checker Prompt:", prompt);
@@ -8,13 +10,13 @@ export async function POST(req: Request) {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY!}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openrouter/auto',  // auto-selects a model you can afford
-        max_tokens: 800,           // limit token usage
-        temperature: 0.7,          // balanced temperature
+        model: 'openrouter/auto',
+        max_tokens: 800,
+        temperature: 0.7,
         messages: [
           {
             role: 'system',
@@ -43,4 +45,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ result: '❌ Sorry, an error occurred while processing your request.' });
   }
 }
-

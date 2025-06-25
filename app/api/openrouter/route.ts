@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Readable } from 'stream';
 import { createWorker } from 'tesseract.js';
 
-// ✅ Convert image stream to Buffer
+// OCR image to buffer
 async function streamToBuffer(stream: Readable): Promise<Buffer> {
   const chunks: Buffer[] = [];
   for await (const chunk of stream) chunks.push(Buffer.from(chunk));
   return Buffer.concat(chunks);
 }
 
+// Fetch diagram
 async function fetchImageFromUnsplash(query: string): Promise<string | null> {
   try {
     const res = await fetch(
@@ -28,27 +29,28 @@ async function fetchImageFromUnsplash(query: string): Promise<string | null> {
   }
 }
 
+// Model selector
 function chooseModel(message: string): string {
   const lower = message.toLowerCase();
   const commerceKeywords = ['depreciation', 'journal', 'ledger', 'tax', 'balance', 'gst', 'capital'];
-  const theoryKeywords = ['define', 'photosynthesis', 'explain', 'what is', 'advantage', 'disadvantage'];
+  const scienceKeywords = ['photosynthesis', 'fertilization', 'epididymis', 'reproduction', 'digestion'];
+  const theoryKeywords = ['define', 'explain', 'what is', 'advantage', 'disadvantage'];
 
   if (commerceKeywords.some(word => lower.includes(word))) {
-    return 'openai/gpt-4-turbo-preview';
+    return 'mistralai/mixtral-8x7b';
   }
-  if (theoryKeywords.some(word => lower.includes(word))) {
-    return 'anthropic/claude-3-haiku';
+  if (scienceKeywords.some(word => lower.includes(word)) || theoryKeywords.some(word => lower.includes(word))) {
+    return 'mistralai/mistral-7b-instruct';
   }
   return 'openrouter/auto';
 }
 
+// POST handler
 export async function POST(req: NextRequest) {
   try {
     const contentType = req.headers.get('content-type');
-
     let message = '';
 
-    // ✅ Handle Image Upload with OCR
     if (contentType?.includes('multipart/form-data')) {
       const formData = await req.formData();
       const file = formData.get('file') as File;
@@ -61,15 +63,12 @@ export async function POST(req: NextRequest) {
       const buffer = Buffer.from(arrayBuffer);
 
       const worker = await createWorker('eng');
-      const {
-        data: { text },
-      } = await worker.recognize(buffer);
+      const { data: { text } } = await worker.recognize(buffer);
       await worker.terminate();
 
       message = text?.trim();
       console.log('📸 OCR Extracted Text:', message);
     } else {
-      // ✅ Handle JSON text input
       const body = await req.json();
       message = body.message;
     }
@@ -81,11 +80,12 @@ export async function POST(req: NextRequest) {
     console.log('📩 Final Query:', message);
 
     const selectedModel = chooseModel(message);
+    const apiKey = process.env.OPENROUTER_IND_KEY!;
 
     const aiRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY!}`,
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -107,13 +107,37 @@ Never say you're an AI or reveal you use GPT or Claude.`,
       }),
     });
 
-    const aiData = await aiRes.json();
+    let aiData = await aiRes.json();
 
+    // Retry on credit error
     if (aiData.error?.message?.includes('credits')) {
-      return NextResponse.json({
-        response: '⚠️ Sorry! This request needs more credits. Please try again later or ask a shorter question.',
-        imageUrl: null,
+      console.warn('🔁 Retrying with fallback model...');
+
+      const fallbackRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'mistralai/mistral-7b-instruct',
+          max_tokens: 800,
+          temperature: 0.7,
+          messages: [
+            {
+              role: 'system',
+              content: `You are Valutide AI — a smart, friendly, and expert study bot built by Valutide Technologies.
+Always explain clearly, support students of all levels in subjects like Commerce, Science, English, and Social Science.`,
+            },
+            {
+              role: 'user',
+              content: message,
+            },
+          ],
+        }),
       });
+
+      aiData = await fallbackRes.json();
     }
 
     let text = aiData.choices?.[0]?.message?.content || 'No answer available.';
