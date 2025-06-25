@@ -6,13 +6,8 @@ export async function POST(req: Request) {
   try {
     console.log("🟡 Incoming Query:", query);
 
-    const apiKey = process.env.OPENROUTER_COMMERCE_KEY;
-
-    if (!apiKey) {
-      return NextResponse.json({
-        answer: "❌ API key missing. Please check your environment variables.",
-      }, { status: 500 });
-    }
+    // ✅ Hardcoded API key (like InDoubt section)
+    const apiKey = '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';
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -21,7 +16,7 @@ export async function POST(req: Request) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-3-haiku', // ✅ changed from gpt to working model
+        model: 'anthropic/claude-3-haiku',
         max_tokens: 1000,
         temperature: 0.7,
         messages: [
