@@ -7,6 +7,7 @@ export async function POST(req: Request) {
     console.log("🟡 Incoming Query:", query);
 
     const apiKey = process.env.OPENROUTER_COMMERCE_KEY;
+
     if (!apiKey) {
       return NextResponse.json({
         answer: "❌ API key missing. Please check your environment variables.",
@@ -20,7 +21,7 @@ export async function POST(req: Request) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openrouter/auto',
+        model: 'anthropic/claude-3-haiku', // ✅ changed from gpt to working model
         max_tokens: 1000,
         temperature: 0.7,
         messages: [
@@ -44,7 +45,7 @@ Avoid all non-commerce questions. Respond in clear, paragraph-style explanations
     if (data.error) {
       return NextResponse.json({
         answer: `❌ Error: ${data.error.message}`,
-      });
+      }, { status: 500 });
     }
 
     const answer = data.choices?.[0]?.message?.content?.trim() || "❌ Sorry, no answer returned.";
@@ -54,6 +55,6 @@ Avoid all non-commerce questions. Respond in clear, paragraph-style explanations
     console.error("❌ API Error:", error);
     return NextResponse.json({
       answer: "❌ Something went wrong. Please try again later.",
-    });
+    }, { status: 500 });
   }
 }
