@@ -6,21 +6,29 @@ export async function POST(req: Request) {
   try {
     console.log("🟡 Incoming Query:", query);
 
+    const apiKey = process.env.OPENROUTER_COMMERCE_KEY;
+    if (!apiKey) {
+      return NextResponse.json({
+        answer: "❌ API key missing. Please check your environment variables.",
+      }, { status: 500 });
+    }
+
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer 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',
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         model: 'openrouter/auto',
-        max_tokens: 1000, // ✅ Reduced token usage
+        max_tokens: 1000,
+        temperature: 0.7,
         messages: [
           {
             role: 'system',
             content: `You are a helpful and smart AI tutor, strictly answering only about commerce topics like:
 📊 Finance, 🧾 Taxation, 💼 Accounting, 🏛️ Business Laws, 📈 Economics, and GST.
-Do not respond to non-commerce topics.`,
+Avoid all non-commerce questions. Respond in clear, paragraph-style explanations.`,
           },
           {
             role: 'user',
@@ -31,14 +39,21 @@ Do not respond to non-commerce topics.`,
     });
 
     const data = await response.json();
-
     console.log("🟢 OpenRouter Response:", JSON.stringify(data, null, 2));
 
-    const answer = data.choices?.[0]?.message?.content || "❌ Sorry, I couldn't find a suitable answer. Try again later.";
+    if (data.error) {
+      return NextResponse.json({
+        answer: `❌ Error: ${data.error.message}`,
+      });
+    }
+
+    const answer = data.choices?.[0]?.message?.content?.trim() || "❌ Sorry, no answer returned.";
     return NextResponse.json({ answer });
 
   } catch (error) {
     console.error("❌ API Error:", error);
-    return NextResponse.json({ answer: "❌ Something went wrong. Please try again later." });
+    return NextResponse.json({
+      answer: "❌ Something went wrong. Please try again later.",
+    });
   }
 }
