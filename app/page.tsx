@@ -1,10 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
-export default function Home() {
+export default function HomePage() {
   const router = useRouter();
   const [showSplash, setShowSplash] = useState(true);
 
@@ -39,10 +38,8 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>Valutide</title>
-        <link rel="icon" href="/valutide-logo.png" type="image/png" sizes="32x32" />
-      </Head>
+      <title>Valutide</title>
+      <link rel="icon" href="/valutide-logo.png" type="image/png" sizes="32x32" />
 
       <div
         className="min-h-screen flex flex-col bg-cover bg-center px-4 py-6 relative"
@@ -93,7 +90,11 @@ export default function Home() {
             </p>
             <p>
               🔔 <span className="font-medium">YouTube</span>:
-              <a href="https://www.youtube.com/@valutide" target="_blank" className="text-red-600 hover:underline ml-1">
+              <a
+                href="https://www.youtube.com/@valutide"
+                target="_blank"
+                className="text-red-600 hover:underline ml-1"
+              >
                 youtube.com/@valutide
               </a>
             </p>

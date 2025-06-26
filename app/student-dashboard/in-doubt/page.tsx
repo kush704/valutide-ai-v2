@@ -13,30 +13,13 @@ const InDoubt = () => {
     setChatId,
     startNewChat,
     addMessage,
+    chats, // 📌 Now using chat titles from useChat()
   } = useChat();
 
   const [userQuery, setUserQuery] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [sidebarChats, setSidebarChats] = useState<string[]>([]);
   const [showSidebar, setShowSidebar] = useState(true);
   const [aiThinking, setAiThinking] = useState(false);
-
-  // Load unique chat IDs for sidebar
-  useEffect(() => {
-    const loadChats = async () => {
-      const { data, error } = await supabase
-        .from('messages')
-        .select('chat_id')
-        .order('created_at', { ascending: false });
-
-      if (data) {
-        const uniqueIds = Array.from(new Set(data.map((msg) => msg.chat_id)));
-        setSidebarChats(uniqueIds);
-      }
-    };
-
-    loadChats();
-  }, [chatId]);
 
   const handleQuerySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,22 +27,24 @@ const InDoubt = () => {
 
     let finalQuery = userQuery;
 
+    // OCR image if uploaded
     if (imageFile) {
       const ocrResult = await Tesseract.recognize(imageFile, 'eng');
       finalQuery = ocrResult.data.text.trim();
       setUserQuery(finalQuery);
     }
 
-    const userMsg = {
-      chat_id: chatId!,
-      role: 'user' as const,
+    // 1️⃣ Send user message
+    await addMessage({
+      chat_id: chatId || '',
+      role: 'user',
       content: finalQuery,
-    };
+    });
 
-    await addMessage(userMsg);
     setUserQuery('');
     setAiThinking(true);
 
+    // 2️⃣ Get AI response
     const res = await fetch('/api/openrouter', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -67,16 +52,18 @@ const InDoubt = () => {
     });
 
     const data = await res.json();
-
     let reply = data.response;
+
+    // Clean response
     reply = reply
       .replace(/As an AI language model,? ?/gi, '')
       .replace(/I cannot/gi, "Let's break it down together:")
       .replace(/I'm just an AI/gi, "Here's how I can explain it")
       .replace(/Based on my training/gi, "From what I know");
 
+    // 3️⃣ Save AI response
     await addMessage({
-      chat_id: chatId!,
+      chat_id: chatId || '',
       role: 'ai',
       content: reply,
     });
@@ -86,7 +73,7 @@ const InDoubt = () => {
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
+      {/* ✅ Sidebar */}
       {showSidebar && (
         <div className="w-64 bg-gray-100 p-4 space-y-2 shadow-md">
           <div className="flex justify-between items-center mb-4">
@@ -106,22 +93,23 @@ const InDoubt = () => {
             ➕ New Chat
           </button>
 
-          <div className="space-y-1 mt-4">
-            {sidebarChats.map((id, idx) => (
+          <div className="space-y-1 mt-4 max-h-[70vh] overflow-y-auto">
+            {chats.map((chat) => (
               <button
-                key={id}
-                onClick={() => setChatId(id)}
-                className={`w-full text-left p-2 rounded-lg ${
-                  id === chatId ? 'bg-blue-200 font-bold' : 'hover:bg-blue-100'
+                key={chat.id}
+                onClick={() => setChatId(chat.id)}
+                className={`w-full text-left p-2 rounded-lg truncate ${
+                  chat.id === chatId ? 'bg-blue-200 font-bold' : 'hover:bg-blue-100'
                 }`}
               >
-                Chat {sidebarChats.length - idx}
+                {chat.title || 'Untitled'}
               </button>
             ))}
           </div>
         </div>
       )}
 
+      {/* Sidebar toggle on mobile */}
       {!showSidebar && (
         <button
           onClick={() => setShowSidebar(true)}
@@ -131,7 +119,7 @@ const InDoubt = () => {
         </button>
       )}
 
-      {/* Main chat section */}
+      {/* ✅ Main Chat */}
       <div
         className="flex-1 bg-cover bg-center bg-no-repeat flex flex-col justify-between p-4 md:p-6"
         style={{ backgroundImage: "url('/in-doubt-bg.png')" }}
@@ -173,12 +161,11 @@ const InDoubt = () => {
           )}
         </div>
 
-        {/* Input Form */}
+        {/* ✅ Input */}
         <form
           onSubmit={handleQuerySubmit}
           className="w-full max-w-3xl mx-auto flex items-center p-2 bg-white rounded-xl shadow-md gap-2"
         >
-          {/* Upload Image */}
           <label className="cursor-pointer text-xl text-gray-600 hover:text-blue-600">
             📷
             <input
