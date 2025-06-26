@@ -1,8 +1,8 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { NextAuthOptions } from 'next-auth';
+import { AuthOptions } from 'next-auth';
 
-export const authOptions: NextAuthOptions = {
+const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -10,18 +10,18 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   pages: {
-    signIn: '/', // redirect unauthenticated users to home
+    signIn: '/', // Redirects to homepage for sign-in
   },
   callbacks: {
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.sub;
-      }
+      // @ts-ignore: extending session with user ID
+      session.user.id = token.sub;
       return session;
     },
   },
 };
 
+// ✅ ✅ ✅ Export only handler (no named exports)
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
