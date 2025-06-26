@@ -2,10 +2,15 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import Image from 'next/image';
 
 export default function HomePage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [showSplash, setShowSplash] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showAuthChoice, setShowAuthChoice] = useState(false);
 
   useEffect(() => {
     const splashShown = sessionStorage.getItem('splashShown');
@@ -15,6 +20,7 @@ export default function HomePage() {
       sessionStorage.setItem('splashShown', 'true');
       const timer = setTimeout(() => {
         setShowSplash(false);
+        setShowAuthChoice(true);
       }, 5000);
       return () => clearTimeout(timer);
     }
@@ -36,6 +42,29 @@ export default function HomePage() {
     );
   }
 
+  if (showAuthChoice && !session) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center text-center bg-gray-100 px-4">
+        <h1 className="text-3xl font-bold mb-6 text-blue-700">Welcome to Valutide 🚀</h1>
+        <p className="text-gray-700 mb-6">Choose how you'd like to continue:</p>
+        <div className="space-y-4">
+          <button
+            onClick={() => signIn('google')}
+            className="bg-blue-600 text-white px-6 py-2 rounded-full shadow hover:bg-blue-700 transition"
+          >
+            Sign In with Google
+          </button>
+          <button
+            onClick={() => setShowAuthChoice(false)}
+            className="bg-gray-300 text-gray-900 px-6 py-2 rounded-full hover:bg-gray-400 transition"
+          >
+            Continue without Signing In
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <title>Valutide</title>
@@ -45,6 +74,41 @@ export default function HomePage() {
         className="min-h-screen flex flex-col bg-cover bg-center px-4 py-6 relative"
         style={{ backgroundImage: "url('/bg-money-pattern.png')" }}
       >
+        {/* 🔐 Profile Dropdown */}
+        {session && (
+          <div className="absolute top-4 right-4 z-50">
+            <div className="relative">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="rounded-full w-10 h-10 overflow-hidden border-2 border-white shadow-md"
+              >
+                <Image
+                  src={session.user?.image || '/default-user.png'}
+                  alt="User"
+                  width={40}
+                  height={40}
+                />
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 bg-white rounded-xl shadow-lg py-2 w-48 text-left">
+                  <button
+                    onClick={() => signOut()}
+                    className="block w-full px-4 py-2 hover:bg-gray-100"
+                  >
+                    🚪 Sign Out
+                  </button>
+                  <button
+                    onClick={() => alert('Settings coming soon!')}
+                    className="block w-full px-4 py-2 hover:bg-gray-100"
+                  >
+                    ⚙️ Settings
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* ✅ Main Content */}
         <div className="bg-white/80 rounded-2xl shadow-lg p-8 flex flex-col items-center text-center w-full max-w-md md:max-w-2xl mx-auto mt-16">
           <button className="bg-yellow-400 text-black font-semibold text-lg px-6 py-2 rounded-full shadow mb-6 hover:scale-105 transition">
