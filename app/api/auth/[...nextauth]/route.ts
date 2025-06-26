@@ -9,19 +9,20 @@ const authOptions: AuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET, // ✅ Needed in production
   pages: {
-    signIn: '/', // Redirects to homepage for sign-in
+    signIn: '/', // Redirect to homepage
   },
   callbacks: {
     async session({ session, token }) {
-      // @ts-ignore: extending session with user ID
+      // @ts-ignore: Custom user ID in session
       session.user.id = token.sub;
       return session;
     },
   },
 };
 
-// ✅ ✅ ✅ Export only handler (no named exports)
+// ✅ Export handler for both GET and POST
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
