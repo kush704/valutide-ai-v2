@@ -2,29 +2,27 @@
 
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import type { AuthOptions } from 'next-auth';
+import { AuthOptions } from 'next-auth';
 
-export const authOptions: AuthOptions = {
+const handler = NextAuth({
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET, // ✅ Required in production
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: '/', // Redirects to your homepage or custom sign-in page
+    signIn: '/', // optional: redirect to homepage
   },
   callbacks: {
     async session({ session, token }) {
-      // @ts-ignore: adding user id to session
+      // @ts-ignore
       session.user.id = token.sub;
       return session;
     },
   },
-};
+});
 
-// ✅ Export only handler (not named exports)
-const handler = NextAuth(authOptions);
-
+// ✅ Only export handler as GET and POST
 export { handler as GET, handler as POST };
