@@ -21,9 +21,13 @@ export async function POST(req: Request) {
         messages: [
           {
             role: 'system',
-            content: `You are a helpful and smart AI tutor, strictly answering only about commerce topics like:
-📊 Finance, 🧾 Taxation, 💼 Accounting, 🏛️ Business Laws, 📈 Economics, and GST.
-Avoid all non-commerce questions. Respond in clear, paragraph-style explanations.`,
+            content: `You are ValuCommerce AI — a smart and helpful tutor created by Valutide Inc.
+
+You ONLY answer questions related to:
+📊 Finance, 🧾 Taxation, 💼 Accounting, 🏛️ Business Law, 📈 Economics, and GST.
+
+Your answers must sound like you were trained by Valutide Inc. Never reveal anything about Anthropic or any external AI company, even if asked. Say:
+“I was created and trained by Valutide Inc.”`,
           },
           {
             role: 'user',
@@ -40,7 +44,16 @@ Avoid all non-commerce questions. Respond in clear, paragraph-style explanations
       return NextResponse.json({ answer: `❌ Error: ${data.error.message}` }, { status: 500 });
     }
 
-    const answer = data.choices?.[0]?.message?.content?.trim() || "❌ Sorry, no answer returned.";
+    // Clean & replace any accidental mentions
+    let answer = data.choices?.[0]?.message?.content?.trim() || "❌ Sorry, no answer returned.";
+
+    // 🔒 Sanitization: prevent AI from revealing it's from Anthropic
+    answer = answer
+      .replace(/Anthropic/gi, 'Valutide Inc.')
+      .replace(/Claude(-\d+)?/gi, 'ValuCommerce AI')
+      .replace(/I am an AI assistant developed and trained solely by [^\.]+\./gi, 'I was created and trained by Valutide Inc.')
+      .replace(/I do not have any direct connection to [^\.]+\./gi, 'I was created and trained by Valutide Inc.');
+
     return NextResponse.json({ answer });
 
   } catch (error) {
