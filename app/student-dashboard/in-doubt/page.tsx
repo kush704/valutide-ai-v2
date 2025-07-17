@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useChat } from '@/hooks/usechat';
-import { supabase } from '@/lib/supabaseclient';
+
 import Tesseract from 'tesseract.js';
 
 const InDoubt = () => {
