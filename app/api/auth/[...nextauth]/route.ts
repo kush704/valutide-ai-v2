@@ -1,20 +1,16 @@
-// app/api/auth/[...nextauth]/route.ts
-
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { AuthOptions } from 'next-auth';
+import { NextAuthOptions } from 'next-auth';
 
-const handler = NextAuth({
+const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
-  pages: {
-    signIn: '/', // optional: redirect to homepage
-  },
+  secret: process.env.NEXTAUTH_SECRET, // ← This MUST be present
+  pages: { signIn: '/' },
   callbacks: {
     async session({ session, token }) {
       // @ts-ignore
@@ -22,7 +18,9 @@ const handler = NextAuth({
       return session;
     },
   },
-});
+};
 
-// ✅ Only export handler as GET and POST
+console.log('NEXTAUTH_SECRET set?', Boolean(process.env.NEXTAUTH_SECRET));
+
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
