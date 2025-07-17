@@ -117,14 +117,22 @@ export default function HomePage() {
           <p className="text-xl text-white/70 mb-8">
             India’s next Financial Operating System — Offline-first, GST-ready & AI-native.
           </p>
+          
           <button
-            onClick={() => router.push('/valucount-landing')}
-            className="bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-3 rounded text-lg text-white hover:scale-105 transition"
-          >
-            <Sparkles className="inline-block mr-2 w-5 h-5" />
-            Coming Soon: ValuCount
-          </button>
-        <div className="mt-8">
+  onClick={() => router.push('/valucount-landing')}
+  className="bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-3 rounded text-lg text-white hover:scale-105 transition"
+>
+  <Sparkles className="inline-block mr-2 w-5 h-5" />
+  Coming Soon: ValuCount
+</button>
+
+          
+          
+          
+          
+          
+          <div className="mt-8">
+  
   <p className="text-xl text-white/80 mb-4">
     Or try our latest launch: <span className="text-purple-300 font-semibold">ValuCommerce AI</span> —
     the world’s most advanced commerce agent.
@@ -137,17 +145,6 @@ export default function HomePage() {
   </button>
 </div>
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         </div>
         <div ref={coinsRef} className="absolute inset-0 pointer-events-none">
           {mockData.floatingCoins.map((coin, idx) => (
@@ -323,7 +320,7 @@ export default function HomePage() {
         </div>
         <div className="mt-12 text-center text-white/60 text-xs">
           Built with love by future CA founders 🇮🇳<br />
-          © 2025 <strong className="text-white">Valutide™Inc.</strong>. All rights reserved.
+          © 2025 <strong className="text-white">Valutide™ Inc.</strong>. All rights reserved.
         </div>
       </footer>
     </main>
